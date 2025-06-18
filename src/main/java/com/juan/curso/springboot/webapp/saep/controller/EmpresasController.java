@@ -34,7 +34,7 @@ public class EmpresasController
 
     @GetMapping
     public List<Empresas> getAll() {
-        return empresasRepository.findAll(); // Devuelve todos los productos en JSON
+        return empresasRepository.findAll();
     }
 
     @GetMapping("/{id}")
