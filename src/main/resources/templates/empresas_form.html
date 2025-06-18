@@ -27,7 +27,7 @@
         <a class="nav-link text-white" th:href="@{/vista/aprendices}">📋 Aprendices</a>
         <a class="nav-link text-white" th:href="@{/vista/fichas}">📋 Fichas</a>
         <a class="nav-link text-white" th:href="@{/vista/empresas}">🏢 Empresas</a>
-        <a class="nav-link text-white" th:href="@{/vista/modalidad}">⚔️ Modalidad</a>
+        <a class="nav-link text-white" th:href="@{/vista/modalidades}">⚔️ Modalidad</a>
         <a class="nav-link text-white" th:href="@{/vista/novedades}">💾 Novedades</a>
         <a class="nav-link text-white" th:href="@{/vista/programas}">🛠️ Programas</a>
         <a class="nav-link text-white" th:href="@{/vista/roles}">📎 Roles</a>
@@ -40,8 +40,8 @@
 <!-- Contenido principal -->
 <div style="padding: 20px;">
 
-<!-- Título dinámico -->
-<h1 class="text-success" th:text="${empresas.id_empresas == null} ? 'Registrar Empresa' : 'Editar Empresa'"></h1>
+    <!-- Título dinámico -->
+    <h1 class="text-success" th:text="${empresas.id_empresas == null} ? 'Registrar Empresa' : 'Editar Empresa'"></h1>
 
     <form th:action="@{/vista/guardar}" th:object="${empresas}" method="post" novalidate>
         <!-- Campo oculto para conservar el ID al editar -->
@@ -67,15 +67,15 @@
             <input type="text" th:field="*{area}" class="form-control" required />
         </div>
 
+        <!--coevaluadores-->
         <div class="mb-3">
             <label class="form-label">Coevaluador</label>
-            <select name="id_usuarios" class="form-select" required>
+            <select th:field="*{id_usuarios}" class="form-select" required>
                 <option value="">Seleccione un coevaluador</option>
-                <option value="1">Carlos Rodríguez</option>
-                <option value="2">Jorge Castro</option>
-                <option value="3">Camila Vargas</option>
-                <option value="4">Alejandro Quintero</option>
-                <option value="5">Paola Herrera</option>
+                <option th:each="usuarios : ${usuarios}"
+                        th:value="${usuarios.id_usuarios}"
+                        th:text="${usuarios.nombres + ' ' + usuarios.apellidos}">
+                </option>
             </select>
         </div>
 
@@ -111,10 +111,12 @@
 
         <div class="mb-3">
             <label class="form-label">Estado</label>
-            <select th:field="*{estado}" class="form-select" required>
-                <option value="" disabled th:if="${empresas.estado == null}" selected>Seleccione una opción</option>
-                <option value="Activa">Activa</option>
-                <option value="Inactiva">Inactiva</option>
+            <select name="id_usuarios" class="form-select" required>
+                <option value="">Seleccione un coevaluador</option>
+                <option th:each="usuario : ${usuarios}"
+                        th:value="${usuario.id_usuarios}"
+                        th:text="${usuario.nombres + ' ' + usuario.apellidos}">
+                </option>
             </select>
         </div>
 
@@ -124,7 +126,6 @@
         <button type="submit" class="btn btn-success">Guardar</button>
         <a th:href="@{/vista/empresas}" class="btn btn-secondary">Volver</a>
     </form>
-
 
 </div>
 <script th:src="@{/js/script.js}"></script>
