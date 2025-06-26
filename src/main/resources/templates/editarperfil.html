@@ -62,29 +62,32 @@
         </div>
 
         <!-- Formulario de guardado -->
-        <form th:action="@{/vistaEditar/guardar}" th:object="${usuarios}" method="post" novalidate>
+        <form th:action="@{/vistaEditar/guardar}" th:object="${usuarios}" method="post" novalidate onsubmit="return prepararEnvioFormulario()">
             <!-- Campo oculto para conservar el ID al editar -->
             <input type="hidden" th:field="*{id_usuarios}" />
 
             <!-- Campo oculto para conservar el ID al editar -->
             <input type="hidden" th:field="*{clave}" />
 
+            <!-- Campo oculto para conservar el rol (importante para evitar null en backend) -->
+            <input type="hidden" th:field="*{id_rol}" id="hiddenRol" />
+
             <!-- Nombres -->
             <div class="form-row">
                 <label class="form-label-fixed">Nombres:</label>
-                <input type="text" th:field="*{nombres}" class="form-control-wide" required disabled />
+                <input type="text" th:field="*{nombres}" name="nombres" class="form-control-wide" required disabled />
             </div>
 
             <!-- Apellidos -->
             <div class="form-row">
                 <label class="form-label-fixed">Apellidos:</label>
-                <input type="text" th:field="*{apellidos}" class="form-control-wide" required disabled />
+                <input type="text" th:field="*{apellidos}" name="apellidos" class="form-control-wide" required disabled />
             </div>
 
             <!-- Tipo de Documento -->
             <div class="form-row">
                 <label class="form-label-fixed">Tipo de Documento:</label>
-                <select th:field="*{tipo_dc}" class="form-select-wide" required disabled>
+                <select th:field="*{tipo_dc}" name="tipo_dc" class="form-select-wide" required disabled>
                     <option value="" disabled th:if="${usuarios.tipo_dc == null}" selected>Seleccione una opción</option>
                     <option value="Cédula de Ciudadania">Cédula de Ciudadanía</option>
                     <option value="Tarjeta de Identidad">Tarjeta de Identidad</option>
@@ -96,43 +99,44 @@
             <!-- Identificación -->
             <div class="form-row">
                 <label class="form-label-fixed">Identificación:</label>
-                <input type="text" th:field="*{numero}" class="form-control-wide" required disabled />
+                <input type="text" th:field="*{numero}" name="numero" class="form-control-wide" required disabled />
             </div>
 
             <!-- Correo -->
             <div class="form-row">
                 <label class="form-label-fixed">Correo:</label>
-                <input type="email" th:field="*{email}" class="form-control-wide" required disabled />
+                <input type="email" th:field="*{email}" name="email" class="form-control-wide" required disabled />
             </div>
 
             <!-- Correo Institucional -->
             <div class="form-row">
                 <label class="form-label-fixed">Correo Institucional:</label>
-                <input type="email" th:field="*{email_insti}" class="form-control-wide" required disabled />
+                <input type="email" th:field="*{email_insti}" name="email_insti" class="form-control-wide" required disabled />
             </div>
+
 
             <!-- Dirección -->
             <div class="form-row">
                 <label class="form-label-fixed">Dirección:</label>
-                <input type="text" th:field="*{direccion}" class="form-control-wide" required disabled />
+                <input type="text" th:field="*{direccion}" name="direccion" class="form-control-wide" required disabled />
             </div>
 
             <!-- Contacto Principal -->
             <div class="form-row">
                 <label class="form-label-fixed">Contacto:</label>
-                <input type="text" th:field="*{contacto1}" class="form-control-wide" required disabled />
+                <input type="text" th:field="*{contacto1}" name="contacto1" class="form-control-wide" required disabled />
             </div>
 
             <!-- Contacto Secundario -->
             <div class="form-row">
                 <label class="form-label-fixed">Contacto Secundario:</label>
-                <input type="text" th:field="*{contacto2}" class="form-control-wide" disabled />
+                <input type="text" th:field="*{contacto2}" name="contacto2" class="form-control-wide" disabled />
             </div>
 
             <!-- Rol -->
             <div class="form-row">
                 <label class="form-label-fixed">Rol:</label>
-                <select th:field="*{id_rol}" class="form-select-wide" required disabled>
+                <select name="id_rol_display" id="id_rol_display" class="form-select-wide" required disabled>
                     <option value="" disabled th:if="${usuarios.id_rol == null}" selected>Seleccione una opción</option>
                     <option value="1" th:selected="${usuarios.id_rol == 1}">Aprendiz</option>
                     <option value="2" th:selected="${usuarios.id_rol == 2}">Evaluador</option>
@@ -146,7 +150,7 @@
             <!-- Estado -->
             <div class="form-row">
                 <label class="form-label-fixed">Estado:</label>
-                <select th:field="*{estado}" class="form-select-wide" required disabled>
+                <select th:field="*{estado}" name="estado" class="form-select-wide" required disabled>
                     <option value="" disabled th:if="${usuarios.estado == null}" selected>Seleccione una opción</option>
                     <option value="Activo">Activo</option>
                     <option value="Inactivo">Inactivo</option>
@@ -154,17 +158,25 @@
             </div>
 
             <!-- Sección visible solo para Aprendices -->
-
             <div th:if="${aprendiz != null}">
 
                 <!-- Campo oculto con el ID del aprendiz -->
                 <input type="hidden" name="id_aprendices" th:value="${aprendiz.id_aprendices}" />
 
+                <!-- Campo oculto para conservar la modalidad (evita el TransientObjectException) -->
+                <input type="hidden" name="id_modalidad" th:value="${aprendiz.idModalidades.id_modalidad}" id="hiddenModalidad" />
+
+                <!-- Campos ocultos para conservar las relaciones de Ficha y Empresa -->
+                <input type="hidden" name="id_fichas" th:value="${aprendiz.idFichas.id_fichas}" />
+                <input type="hidden" name="id_empresas" th:value="${aprendiz.idEmpresas.id_empresas}" />
+
+                <!-- Campo oculto para conservar el estado formativo -->
+                <input type="hidden" name="estado_formativo" th:value="${aprendiz.estado}" id="hiddenEstadoFormativo" />
 
                 <!-- Modalidad -->
                 <div class="form-row" th:if="${aprendiz != null}">
                     <label class="form-label-fixed">Modalidad:</label>
-                    <select class="form-select-wide" name="id_modalidad" id="id_modalidad" disabled>
+                    <select class="form-select-wide" name="id_modalidad_display" id="id_modalidad_display" disabled>
                         <option value="1" th:selected="${aprendiz.idModalidades.id_modalidad == 1}">Vinculación Laboral</option>
                         <option value="2" th:selected="${aprendiz.idModalidades.id_modalidad == 2}">Pasantías</option>
                         <option value="3" th:selected="${aprendiz.idModalidades.id_modalidad == 3}">Proyecto Productivo</option>
@@ -194,15 +206,13 @@
                 <!-- Estado Formativo -->
                 <div class="form-row">
                     <label class="form-label-fixed">Estado Formativo:</label>
-                    <select class="form-select-wide" name="estado_formativo" id="estado_formativo" disabled>
+                    <select class="form-select-wide" name="estado_formativo_display" id="estado_formativo_display" disabled>
                         <option value="En curso" th:selected="${aprendiz.estado == 'En curso'}">En curso</option>
                         <option value="Aprobado" th:selected="${aprendiz.estado == 'Aprobado'}">Aprobado</option>
                         <option value="No aprobado" th:selected="${aprendiz.estado == 'No aprobado'}">No aprobado</option>
                     </select>
                 </div>
             </div>
-
-
 
             <!-- Botones centrados al final del formulario -->
             <div class="form-buttons">
@@ -224,6 +234,5 @@
 <!-- JavaScript general del sitio -->
 <script th:src="@{/js/script.js}"></script>
 <!-- JavaScript específico para editar perfil -->
-<!--<script th:src="@{/js/editarperfil.js}"></script>-->
 </body>
 </html>
