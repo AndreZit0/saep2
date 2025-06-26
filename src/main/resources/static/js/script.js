@@ -611,3 +611,544 @@ if (document.readyState === 'loading') {
 } else {
     initializeFilterableSelects();
 }
+
+
+
+//===================VALIDACIONES CAMPOS EDITARPERFIL====================//
+
+// Validaciones para el formulario de editar perfil
+
+// Función para validar solo letras y espacios
+function validarSoloLetras(input) {
+    const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+    return regex.test(input.value.trim());
+}
+
+// Función para validar solo números
+function validarSoloNumeros(input) {
+    const regex = /^[0-9]+$/;
+    return regex.test(input.value.trim());
+}
+
+// Función para validar email
+function validarEmail(input) {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(input.value.trim());
+}
+
+// Función para validar email institucional (debe contener @sena.edu.co)
+function validarEmailInstitucional(input) {
+    const regex = /^[^\s@]+@soy\.sena\.edu\.co$/;
+    return regex.test(input.value.trim());
+}
+
+// Función para validar dirección (letras, números, espacios y caracteres especiales básicos)
+function validarDireccion(input) {
+    const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s#\-.,]+$/;
+    return regex.test(input.value.trim()) && input.value.trim().length >= 5;
+}
+
+// Función para validar número de contacto (10 dígitos)
+function validarContacto(input) {
+    const regex = /^[0-9]{10}$/;
+    return regex.test(input.value.trim());
+}
+
+// Función para validar número de documento según tipo
+function validarNumeroDocumento(inputNumero, selectTipo) {
+    const numero = inputNumero.value.trim();
+    const tipo = selectTipo.value;
+
+    switch(tipo) {
+        case 'Cédula de Ciudadania':
+            // CC: 7-10 dígitos
+            return /^[0-9]{7,10}$/.test(numero);
+        case 'Tarjeta de Identidad':
+            // TI: 10-11 dígitos
+            return /^[0-9]{10,11}$/.test(numero);
+        case 'Cédula de Extranjeria':
+            // CE: puede contener letras y números, 6-12 caracteres
+            return /^[a-zA-Z0-9]{6,12}$/.test(numero);
+        case 'PEP':
+            // PEP: formato alfanumérico, 8-15 caracteres
+            return /^[a-zA-Z0-9]{8,15}$/.test(numero);
+        default:
+            return false;
+    }
+}
+
+// Función para mostrar error
+function mostrarError(input, mensaje) {
+    // Remover error anterior si existe
+    const errorAnterior = input.parentNode.querySelector('.error-message');
+    if (errorAnterior) {
+        errorAnterior.remove();
+    }
+
+    // Crear nuevo mensaje de error
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message';
+    errorDiv.style.color = '#dc3545';
+    errorDiv.style.fontSize = '0.875rem';
+    errorDiv.style.marginTop = '0.25rem';
+    errorDiv.textContent = mensaje;
+
+    // Agregar clase de error al input
+    input.classList.add('is-invalid');
+    input.style.borderColor = '#dc3545';
+
+    // Insertar mensaje después del input
+    input.parentNode.appendChild(errorDiv);
+}
+
+// Función para limpiar error
+function limpiarError(input) {
+    const errorMessage = input.parentNode.querySelector('.error-message');
+    if (errorMessage) {
+        errorMessage.remove();
+    }
+    input.classList.remove('is-invalid');
+    input.style.borderColor = '';
+}
+
+// Función para validar campo individual
+function validarCampo(input) {
+    const valor = input.value.trim();
+    const nombre = input.name || input.id;
+
+    // Limpiar error anterior
+    limpiarError(input);
+
+    // Validar si el campo es requerido y está vacío
+    if (input.hasAttribute('required') && valor === '') {
+        mostrarError(input, 'Este campo es obligatorio');
+        return false;
+    }
+
+    // Si está vacío y no es requerido, es válido
+    if (valor === '' && !input.hasAttribute('required')) {
+        return true;
+    }
+
+    // Validaciones específicas por campo
+    switch(nombre) {
+        case 'nombres':
+            if (!validarSoloLetras(input)) {
+                mostrarError(input, 'Solo se permiten letras y espacios');
+                return false;
+            }
+            if (valor.length < 2) {
+                mostrarError(input, 'Debe tener al menos 2 caracteres');
+                return false;
+            }
+            break;
+
+        case 'apellidos':
+            if (!validarSoloLetras(input)) {
+                mostrarError(input, 'Solo se permiten letras y espacios');
+                return false;
+            }
+            if (valor.length < 2) {
+                mostrarError(input, 'Debe tener al menos 2 caracteres');
+                return false;
+            }
+            break;
+
+        case 'numero':
+            const tipoDocumento = document.querySelector('select[name="tipo_dc"]');
+            if (!validarNumeroDocumento(input, tipoDocumento)) {
+                let mensaje = 'Número de documento inválido';
+                switch(tipoDocumento.value) {
+                    case 'Cédula de Ciudadania':
+                        mensaje = 'La cédula debe tener entre 7 y 10 dígitos';
+                        break;
+                    case 'Tarjeta de Identidad':
+                        mensaje = 'La tarjeta de identidad debe tener entre 10 y 11 dígitos';
+                        break;
+                    case 'Cédula de Extranjeria':
+                        mensaje = 'La cédula de extranjería debe tener entre 6 y 12 caracteres alfanuméricos';
+                        break;
+                    case 'PEP':
+                        mensaje = 'El PEP debe tener entre 8 y 15 caracteres alfanuméricos';
+                        break;
+                }
+                mostrarError(input, mensaje);
+                return false;
+            }
+            break;
+
+        case 'email':
+            if (!validarEmail(input)) {
+                mostrarError(input, 'Ingrese un email válido (ejemplo@dominio.com)');
+                return false;
+            }
+            break;
+
+        case 'email_insti':
+            if (!validarEmailInstitucional(input)) {
+                mostrarError(input, 'El email institucional debe terminar en @soy.sena.edu.co');
+                return false;
+            }
+            break;
+
+        case 'direccion':
+            if (!validarDireccion(input)) {
+                mostrarError(input, 'La dirección debe tener al menos 5 caracteres válidos');
+                return false;
+            }
+            break;
+
+        case 'contacto1':
+            if (!validarContacto(input)) {
+                mostrarError(input, 'El contacto debe tener exactamente 10 dígitos');
+                return false;
+            }
+            break;
+
+        case 'contacto2':
+            if (valor !== '' && !validarContacto(input)) {
+                mostrarError(input, 'El contacto debe tener exactamente 10 dígitos');
+                return false;
+            }
+            break;
+
+        case 'codigoFicha':
+            if (!validarSoloNumeros(input)) {
+                mostrarError(input, 'El código de ficha solo debe contener números');
+                return false;
+            }
+            if (valor.length < 4) {
+                mostrarError(input, 'El código de ficha debe tener al menos 4 dígitos');
+                return false;
+            }
+            break;
+    }
+
+    return true;
+}
+
+// Función para validar todo el formulario
+function validarFormulario() {
+    const inputs = document.querySelectorAll('input[type="text"], input[type="email"]');
+    let formularioValido = true;
+
+    inputs.forEach(input => {
+        if (!input.disabled && !validarCampo(input)) {
+            formularioValido = false;
+        }
+    });
+
+    // Validar selects requeridos
+    const selects = document.querySelectorAll('select[required]');
+    selects.forEach(select => {
+        if (!select.disabled && select.value === '') {
+            mostrarError(select, 'Este campo es obligatorio');
+            formularioValido = false;
+        }
+    });
+
+    return formularioValido;
+}
+
+// Función para validar en tiempo real mientras se escribe
+function validacionEnTiempoReal(input) {
+    const valor = input.value;
+    const nombre = input.name || input.id;
+
+    // Aplicar restricciones mientras se escribe
+    switch(nombre) {
+        case 'nombres':
+        case 'apellidos':
+            // Solo permitir letras, espacios y acentos
+            input.value = valor.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
+            break;
+
+        case 'contacto1':
+        case 'contacto2':
+            // Solo permitir números y limitar a 10 dígitos
+            input.value = valor.replace(/[^0-9]/g, '').substring(0, 10);
+            break;
+
+        case 'numero':
+            const tipoDoc = document.querySelector('select[name="tipo_dc"]').value;
+            if (tipoDoc === 'Cédula de Ciudadania' || tipoDoc === 'Tarjeta de Identidad') {
+                // Solo números para CC y TI
+                input.value = valor.replace(/[^0-9]/g, '');
+            } else {
+                // Alfanumérico para CE y PEP
+                input.value = valor.replace(/[^a-zA-Z0-9]/g, '');
+            }
+            break;
+
+        case 'codigoFicha':
+            // Solo números
+            input.value = valor.replace(/[^0-9]/g, '');
+            break;
+    }
+}
+
+// Event listeners cuando el DOM esté cargado
+document.addEventListener('DOMContentLoaded', function() {
+
+    // Agregar validación en tiempo real a todos los inputs
+    const inputs = document.querySelectorAll('input[type="text"], input[type="email"]');
+    inputs.forEach(input => {
+        // Validación mientras se escribe
+        input.addEventListener('input', function() {
+            validacionEnTiempoReal(this);
+        });
+
+        // Validación al salir del campo
+        input.addEventListener('blur', function() {
+            validarCampo(this);
+        });
+    });
+
+    // Validar número de documento cuando cambie el tipo
+    const tipoDocumento = document.querySelector('select[name="tipo_dc"]');
+    const numeroDocumento = document.querySelector('input[name="numero"]');
+
+    if (tipoDocumento && numeroDocumento) {
+        tipoDocumento.addEventListener('change', function() {
+            if (numeroDocumento.value.trim() !== '') {
+                validarCampo(numeroDocumento);
+            }
+        });
+    }
+
+    // Validar formulario antes de enviar
+    const formulario = document.querySelector('form');
+    if (formulario) {
+        formulario.addEventListener('submit', function(e) {
+            if (!validarFormulario()) {
+                e.preventDefault();
+
+                // Mostrar mensaje de error general
+                const primerError = document.querySelector('.error-message');
+                if (primerError) {
+                    primerError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+
+                // Mostrar alerta
+                alert('Por favor corrija los errores en el formulario antes de continuar');
+            }
+        });
+    }
+});
+
+
+
+/*==============DESHABILITAR CAMPOS PARA APRENDIZ ======================*/
+
+    // Función para habilitar edición con restricciones según el rol
+    function habilitarEdicion() {
+        // Obtener el rol del usuario desde el campo oculto (más confiable)
+        const hiddenRol = document.getElementById('hiddenRol');
+        const rolUsuario = hiddenRol ? parseInt(hiddenRol.value) : null;
+
+        // Campos que siempre pueden editarse (para todos los roles)
+        const camposEditablesGenerales = [
+            'input[name="email"]',
+            'input[name="direccion"]',
+            'input[name="contacto1"]',
+            'input[name="contacto2"]'
+        ];
+
+        // Campos adicionales que solo pueden editar usuarios que NO sean Aprendices (rol != 1)
+        const camposEditablesAdmin = [
+            'input[name="nombres"]',
+            'input[name="apellidos"]',
+            'select[name="tipo_dc"]',
+            'input[name="numero"]',
+            'input[name="email_insti"]',
+            'select[name="id_rol_display"]',
+            'select[name="estado"]',
+            'select[name="id_modalidad_display"]', // Cambiado a display
+            'input[name="codigoFicha"]',
+            'input[name="nombrePrograma"]',
+            'input[name="nombreEmpresa"]',
+            'select[name="estado_formativo_display"]' // Cambiado a display
+        ];
+
+        // Campos que solo deben mostrarse como readonly para Aprendices (no disabled)
+        const camposSoloLectura = [
+            'input[name="nombres"]',
+            'input[name="apellidos"]',
+            'select[name="tipo_dc"]',
+            'input[name="numero"]',
+            'input[name="email_insti"]'
+        ];
+
+        // Habilitar campos editables según el rol
+        if (rolUsuario === 1) {
+            // Usuario Aprendiz - Solo puede editar campos específicos
+            camposEditablesGenerales.forEach(selector => {
+                const campo = document.querySelector(selector);
+                if (campo) {
+                    campo.disabled = false;
+                    campo.readOnly = false;
+                    campo.style.backgroundColor = '#fff';
+                    campo.style.border = '1px solid #ced4da';
+                }
+            });
+
+            // CAMBIO CLAVE: Campos de solo lectura en lugar de disabled
+            camposSoloLectura.forEach(selector => {
+                const campo = document.querySelector(selector);
+                if (campo) {
+                    campo.disabled = false;  // ✅ NO disabled
+                    campo.readOnly = true;   // ✅ Solo lectura
+                    campo.style.backgroundColor = '#e9ecef';
+                    campo.style.border = '1px solid #ced4da';
+                    campo.style.cursor = 'not-allowed';
+                }
+            });
+
+            // Mantener deshabilitados los campos administrativos que no deben editarse
+            const camposAdminRestantes = camposEditablesAdmin.filter(selector =>
+                !camposSoloLectura.some(slSelector => slSelector === selector));
+
+            camposAdminRestantes.forEach(selector => {
+                const campo = document.querySelector(selector);
+                if (campo) {
+                    campo.disabled = true;
+                    campo.style.backgroundColor = '#e9ecef';
+                    campo.style.border = '1px solid #ced4da';
+                }
+            });
+
+            console.log('Modo de edición para Aprendiz activado - Campos críticos en modo solo lectura');
+        } else {
+            // Usuarios con otros roles - pueden editar todos los campos (excepto el rol que siempre va oculto)
+            const todosCampos = [...camposEditablesGenerales, ...camposEditablesAdmin.filter(selector =>
+                selector !== 'select[name="id_rol_display"]' &&
+                selector !== 'select[name="id_modalidad_display"]' &&
+                selector !== 'select[name="estado_formativo_display"]')];
+            todosCampos.forEach(selector => {
+                const campo = document.querySelector(selector);
+                if (campo) {
+                    campo.disabled = false;
+                    campo.readOnly = false;
+                    campo.style.backgroundColor = '#fff';
+                    campo.style.border = '1px solid #ced4da';
+                }
+            });
+
+            console.log('Modo de edición completa activado para usuario con rol:', rolUsuario);
+        }
+
+        // Cambiar estado de los botones
+        const btnEditar = document.getElementById('btnEditar');
+        const btnGuardar = document.getElementById('btnGuardar');
+        const btnCancelar = document.getElementById('btnCancelar');
+
+        if (btnEditar) {
+            btnEditar.disabled = true;
+            btnEditar.style.opacity = '0.6';
+        }
+
+        if (btnGuardar) {
+            btnGuardar.disabled = false;
+            btnGuardar.style.opacity = '1';
+        }
+
+        if (btnCancelar) {
+            btnCancelar.disabled = false;
+            btnCancelar.style.opacity = '1';
+        }
+    }
+
+    // Función para cancelar la edición
+    function cancelarEdicion() {
+        // Deshabilitar todos los campos del formulario
+        const todosLosCampos = document.querySelectorAll('input:not([type="hidden"]), select');
+        todosLosCampos.forEach(campo => {
+            campo.disabled = true;
+            campo.readOnly = false; // ✅ Limpiar readOnly
+            campo.style.backgroundColor = '#e9ecef';
+            campo.style.border = '1px solid #ced4da';
+            campo.style.cursor = 'default'; // ✅ Restaurar cursor
+        });
+
+        // Restaurar estado de los botones
+        const btnEditar = document.getElementById('btnEditar');
+        const btnGuardar = document.getElementById('btnGuardar');
+        const btnCancelar = document.getElementById('btnCancelar');
+
+        if (btnEditar) {
+            btnEditar.disabled = false;
+            btnEditar.style.opacity = '1';
+        }
+
+        if (btnGuardar) {
+            btnGuardar.disabled = true;
+            btnGuardar.style.opacity = '0.6';
+        }
+
+        if (btnCancelar) {
+            btnCancelar.disabled = true;
+            btnCancelar.style.opacity = '0.6';
+        }
+
+        // Recargar la página para restaurar los valores originales
+        location.reload();
+    }
+
+    // Función para enviar formulario asegurando que los campos readonly se incluyan
+    function prepararEnvioFormulario() {
+        // Antes de enviar, temporalmente habilitar campos readonly para que se envíen
+        const camposReadOnly = document.querySelectorAll('input[readonly], select[readonly]');
+        camposReadOnly.forEach(campo => {
+            campo.readOnly = false;
+        });
+
+        // El formulario se enviará automáticamente después de esta función
+        return true;
+    }
+
+    // Función para ocultar/mostrar barra lateral (manteniendo la funcionalidad existente)
+    function ocultarBarra() {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.querySelector('body');
+
+        if (sidebar.style.left === '-220px') {
+            sidebar.style.left = '0px';
+            mainContent.style.marginLeft = '220px';
+        } else {
+            sidebar.style.left = '-220px';
+            mainContent.style.marginLeft = '0px';
+        }
+    }
+
+    // Inicialización cuando se carga la página
+    document.addEventListener('DOMContentLoaded', function() {
+        // Asegurar que todos los campos estén deshabilitados al cargar
+        const todosLosCampos = document.querySelectorAll('input:not([type="hidden"]), select');
+        todosLosCampos.forEach(campo => {
+            campo.disabled = true;
+            campo.style.backgroundColor = '#e9ecef';
+            campo.style.border = '1px solid #ced4da';
+        });
+
+        // Asegurar estado inicial de los botones
+        const btnGuardar = document.getElementById('btnGuardar');
+        const btnCancelar = document.getElementById('btnCancelar');
+
+        if (btnGuardar) {
+            btnGuardar.disabled = true;
+            btnGuardar.style.opacity = '0.6';
+        }
+
+        if (btnCancelar) {
+            btnCancelar.disabled = true;
+            btnCancelar.style.opacity = '0.6';
+        }
+
+        // ✅ AÑADIR EVENTO AL FORMULARIO PARA PREPARAR ENVÍO
+        const formulario = document.querySelector('form');
+        if (formulario) {
+            formulario.addEventListener('submit', prepararEnvioFormulario);
+        }
+
+        console.log('Formulario inicializado - Todos los campos deshabilitados');
+    });
