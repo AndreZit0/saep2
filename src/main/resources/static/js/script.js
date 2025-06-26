@@ -732,7 +732,7 @@ function validarCampo(input) {
 
     // Validaciones específicas por campo
     switch(nombre) {
-        case 'nombres':
+        case 'nombresU':
             if (!validarSoloLetras(input)) {
                 mostrarError(input, 'Solo se permiten letras y espacios');
                 return false;
@@ -743,7 +743,7 @@ function validarCampo(input) {
             }
             break;
 
-        case 'apellidos':
+        case 'apellidosU':
             if (!validarSoloLetras(input)) {
                 mostrarError(input, 'Solo se permiten letras y espacios');
                 return false;
@@ -754,7 +754,7 @@ function validarCampo(input) {
             }
             break;
 
-        case 'numero':
+        case 'numeroU':
             const tipoDocumento = document.querySelector('select[name="tipo_dc"]');
             if (!validarNumeroDocumento(input, tipoDocumento)) {
                 let mensaje = 'Número de documento inválido';
@@ -777,35 +777,35 @@ function validarCampo(input) {
             }
             break;
 
-        case 'email':
+        case 'emailU':
             if (!validarEmail(input)) {
                 mostrarError(input, 'Ingrese un email válido (ejemplo@dominio.com)');
                 return false;
             }
             break;
 
-        case 'email_insti':
+        case 'email_instiU':
             if (!validarEmailInstitucional(input)) {
                 mostrarError(input, 'El email institucional debe terminar en @soy.sena.edu.co');
                 return false;
             }
             break;
 
-        case 'direccion':
+        case 'direccionU':
             if (!validarDireccion(input)) {
                 mostrarError(input, 'La dirección debe tener al menos 5 caracteres válidos');
                 return false;
             }
             break;
 
-        case 'contacto1':
+        case 'contacto1U':
             if (!validarContacto(input)) {
                 mostrarError(input, 'El contacto debe tener exactamente 10 dígitos');
                 return false;
             }
             break;
 
-        case 'contacto2':
+        case 'contacto2U':
             if (valor !== '' && !validarContacto(input)) {
                 mostrarError(input, 'El contacto debe tener exactamente 10 dígitos');
                 return false;
@@ -829,7 +829,7 @@ function validarCampo(input) {
 
 // Función para validar todo el formulario
 function validarFormulario() {
-    const inputs = document.querySelectorAll('input[type="text"], input[type="email"]');
+    const inputs = document.querySelectorAll('input[type="text"], input[type="emailU"]');
     let formularioValido = true;
 
     inputs.forEach(input => {
@@ -857,20 +857,20 @@ function validacionEnTiempoReal(input) {
 
     // Aplicar restricciones mientras se escribe
     switch(nombre) {
-        case 'nombres':
-        case 'apellidos':
+        case 'nombresU':
+        case 'apellidosU':
             // Solo permitir letras, espacios y acentos
             input.value = valor.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
             break;
 
-        case 'contacto1':
-        case 'contacto2':
+        case 'contacto1U':
+        case 'contacto2U':
             // Solo permitir números y limitar a 10 dígitos
             input.value = valor.replace(/[^0-9]/g, '').substring(0, 10);
             break;
 
-        case 'numero':
-            const tipoDoc = document.querySelector('select[name="tipo_dc"]').value;
+        case 'numeroU':
+            const tipoDoc = document.querySelector('select[name="tipo_dcU"]').value;
             if (tipoDoc === 'Cédula de Ciudadania' || tipoDoc === 'Tarjeta de Identidad') {
                 // Solo números para CC y TI
                 input.value = valor.replace(/[^0-9]/g, '');
@@ -905,8 +905,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Validar número de documento cuando cambie el tipo
-    const tipoDocumento = document.querySelector('select[name="tipo_dc"]');
-    const numeroDocumento = document.querySelector('input[name="numero"]');
+    const tipoDocumento = document.querySelector('select[name="tipo_dcU"]');
+    const numeroDocumento = document.querySelector('input[name="numeroU"]');
 
     if (tipoDocumento && numeroDocumento) {
         tipoDocumento.addEventListener('change', function() {
@@ -956,13 +956,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Campos adicionales que solo pueden editar usuarios que NO sean Aprendices (rol != 1)
         const camposEditablesAdmin = [
-            'input[name="nombres"]',
-            'input[name="apellidos"]',
-            'select[name="tipo_dc"]',
-            'input[name="numero"]',
-            'input[name="email_insti"]',
+            'input[name="nombresU"]',
+            'input[name="apellidosU"]',
+            'select[name="tipo_dcU"]',
+            'input[name="numeroU"]',
+            'input[name="email_instiU"]',
             'select[name="id_rol_display"]',
-            'select[name="estado"]',
+            'select[name="estadoU"]',
             'select[name="id_modalidad_display"]', // Cambiado a display
             'input[name="codigoFicha"]',
             'input[name="nombrePrograma"]',
@@ -1123,12 +1123,40 @@ document.addEventListener('DOMContentLoaded', function() {
     // Inicialización cuando se carga la página
     document.addEventListener('DOMContentLoaded', function() {
         // Asegurar que todos los campos estén deshabilitados al cargar
-        const todosLosCampos = document.querySelectorAll('input:not([type="hidden"]), select');
+        /*const todosLosCampos = document.querySelectorAll('input:not([type="hidden"]), select');
         todosLosCampos.forEach(campo => {
             campo.disabled = true;
             campo.style.backgroundColor = '#e9ecef';
             campo.style.border = '1px solid #ced4da';
+        });*/
+        const camposFormulario = [
+                    'input[name="nombresU"]',
+                    'input[name="apellidosU"]',
+                    'input[name="emailU"]',
+                    'input[name="direccionU"]',
+                    'input[name="contacto1U"]',
+                    'input[name="contacto2U"]',
+                    'select[name="tipo_dcU"]',
+                    'input[name="numeroU"]',
+                    'input[name="email_instiU"]',
+                    'select[name="id_rol_display"]',
+                    'select[name="estadoU"]',
+                    'select[name="id_modalidad_display"]',
+                    'input[name="codigoFicha"]',
+                    'input[name="nombrePrograma"]',
+                    'input[name="nombreEmpresa"]',
+                    'select[name="estado_formativo_display"]'
+        ];
+
+        camposFormulario.forEach(selector => {
+              const campo = document.querySelector(selector);
+              if (campo) {
+                        campo.disabled = true;
+                        campo.style.backgroundColor = '#e9ecef';
+                        campo.style.border = '1px solid #ced4da';
+              }
         });
+
 
         // Asegurar estado inicial de los botones
         const btnGuardar = document.getElementById('btnGuardar');
