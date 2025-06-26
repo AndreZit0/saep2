@@ -75,19 +75,19 @@
             <!-- Nombres -->
             <div class="form-row">
                 <label class="form-label-fixed">Nombres:</label>
-                <input type="text" th:field="*{nombres}" name="nombres" class="form-control-wide" required disabled />
+                <input type="text" th:field="*{nombres}" name="nombresU" class="form-control-wide" required disabled />
             </div>
 
             <!-- Apellidos -->
             <div class="form-row">
                 <label class="form-label-fixed">Apellidos:</label>
-                <input type="text" th:field="*{apellidos}" name="apellidos" class="form-control-wide" required disabled />
+                <input type="text" th:field="*{apellidos}" name="apellidosU" class="form-control-wide" required disabled />
             </div>
 
             <!-- Tipo de Documento -->
             <div class="form-row">
                 <label class="form-label-fixed">Tipo de Documento:</label>
-                <select th:field="*{tipo_dc}" name="tipo_dc" class="form-select-wide" required disabled>
+                <select th:field="*{tipo_dc}" name="tipo_dcU" class="form-select-wide" required disabled>
                     <option value="" disabled th:if="${usuarios.tipo_dc == null}" selected>Seleccione una opción</option>
                     <option value="Cédula de Ciudadania">Cédula de Ciudadanía</option>
                     <option value="Tarjeta de Identidad">Tarjeta de Identidad</option>
@@ -99,38 +99,38 @@
             <!-- Identificación -->
             <div class="form-row">
                 <label class="form-label-fixed">Identificación:</label>
-                <input type="text" th:field="*{numero}" name="numero" class="form-control-wide" required disabled />
+                <input type="text" th:field="*{numero}" name="numeroU" class="form-control-wide" required disabled />
             </div>
 
             <!-- Correo -->
             <div class="form-row">
                 <label class="form-label-fixed">Correo:</label>
-                <input type="email" th:field="*{email}" name="email" class="form-control-wide" required disabled />
+                <input type="email" th:field="*{email}" name="emailU" class="form-control-wide" required disabled />
             </div>
 
             <!-- Correo Institucional -->
             <div class="form-row">
                 <label class="form-label-fixed">Correo Institucional:</label>
-                <input type="email" th:field="*{email_insti}" name="email_insti" class="form-control-wide" required disabled />
+                <input type="email" th:field="*{email_insti}" name="email_instiU" class="form-control-wide" required disabled />
             </div>
 
 
             <!-- Dirección -->
             <div class="form-row">
                 <label class="form-label-fixed">Dirección:</label>
-                <input type="text" th:field="*{direccion}" name="direccion" class="form-control-wide" required disabled />
+                <input type="text" th:field="*{direccion}" name="direccionU" class="form-control-wide" required disabled />
             </div>
 
             <!-- Contacto Principal -->
             <div class="form-row">
                 <label class="form-label-fixed">Contacto:</label>
-                <input type="text" th:field="*{contacto1}" name="contacto1" class="form-control-wide" required disabled />
+                <input type="text" th:field="*{contacto1}" name="contacto1U" class="form-control-wide" required disabled />
             </div>
 
             <!-- Contacto Secundario -->
             <div class="form-row">
                 <label class="form-label-fixed">Contacto Secundario:</label>
-                <input type="text" th:field="*{contacto2}" name="contacto2" class="form-control-wide" disabled />
+                <input type="text" th:field="*{contacto2}" name="contacto2U" class="form-control-wide" disabled />
             </div>
 
             <!-- Rol -->
@@ -150,7 +150,7 @@
             <!-- Estado -->
             <div class="form-row">
                 <label class="form-label-fixed">Estado:</label>
-                <select th:field="*{estado}" name="estado" class="form-select-wide" required disabled>
+                <select th:field="*{estado}" name="estadoU" class="form-select-wide" required disabled>
                     <option value="" disabled th:if="${usuarios.estado == null}" selected>Seleccione una opción</option>
                     <option value="Activo">Activo</option>
                     <option value="Inactivo">Inactivo</option>
