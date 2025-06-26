@@ -426,7 +426,6 @@ a {
 
 /* Estructura principal */
 #sidebar {
-    background-color: var(--color-primary);
     min-height: 100vh;
     width: var(--sidebar-width);
     position: fixed;

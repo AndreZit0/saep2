@@ -956,13 +956,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Campos adicionales que solo pueden editar usuarios que NO sean Aprendices (rol != 1)
         const camposEditablesAdmin = [
-            'input[name="nombresU"]',
-            'input[name="apellidosU"]',
-            'select[name="tipo_dcU"]',
-            'input[name="numeroU"]',
-            'input[name="email_instiU"]',
+            'input[name="nombres"]',
+            'input[name="apellidos"]',
+            'select[name="tipo_dc"]',
+            'input[name="numero"]',
+            'input[name="email_insti"]',
             'select[name="id_rol_display"]',
-            'select[name="estadoU"]',
+            'select[name="estado"]',
             'select[name="id_modalidad_display"]', // Cambiado a display
             'input[name="codigoFicha"]',
             'input[name="nombrePrograma"]',
